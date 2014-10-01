@@ -1,5 +1,8 @@
 require_relative 'grid_print'
 require_relative 'board'
+require_relative 'cell'
+require_relative 'board'
+require_relative 'ship'
 
 class Player
 

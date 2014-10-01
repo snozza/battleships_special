@@ -1,23 +1,27 @@
 require_relative 'player'
 require_relative 'board'
+require_relative 'ship'
+require_relative 'cell'
 
 class Game
 	
-	attr_accessor :player1
-	attr_accessor :player2
+	attr_accessor :players
 
-	def initialize(player1="player1", player2="player2")
-		@player1 = Player.new(player1)
-		@player2 = Player.new(player2)
+	def initialize
+		@players = []
+	end
+
+	def add_player(player)
+		players << player
 	end
 
 	def play
 		winner = false
-		ask_player_place_ship(player1, player1.ships)
-		ask_player_place_ship(player2, player2.ships)
+		ask_player_place_ship(players[0], players[1].ships)
+		ask_player_place_ship(players[1], players[1].ships)
 		while winner == false
-			winner = play_round(player1, player2); break if winner
-			winner = play_round(player2, player1)
+			winner = play_round(players[0], players[1]); break if winner
+			winner = play_round(players[1], players[0])
 		end
 		puts "The winner is #{winner}!!!"
 	end
@@ -58,16 +62,14 @@ class Game
 	end
 
 	def coordinates(player, ship)
-		puts "#{player.name}, where do you want to place your #{ship.name} with size: #{ship.size} (e.g. 'A1')"
 		coord = STDIN.gets.chomp.upcase
-	 	x, y = player.board.coord_converter(coord)
+		x, y = player.board.coord_converter(coord)
 		return x, y if (0..9).include?(x) && (0..9).include?(y)
 			puts "Please enter valid coordinate!" 
 			coordinates(player, ship)
 		end
 
 	def ask_player_ship_direction(player, ship)
-		puts "#{player.name}, what direction do you want to place your #{ship.name} with size: #{ship.size}('R' or 'D')"
 		direction = STDIN.gets.chomp.upcase
 		return direction if direction == "D" || direction == "R"
 		puts "Please enter valid direction"
@@ -75,11 +77,9 @@ class Game
 	end
 
 	def ask_player_shoot(player, opponent)
-		puts "#{player.name}, where do you want to shoot? (e.g. 'A1')"
 		coord = STDIN.gets.chomp.upcase
 		x, y = player.board.coord_converter(coord)
 		return x, y if (0..9).include?(x) && (0..9).include?(y) && opponent.board.grid[x][y].status == :empty
-		puts "Enter Valid Coords" 
 		ask_player_shoot(player, opponent)
 	end
 

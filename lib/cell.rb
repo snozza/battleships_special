@@ -1,3 +1,7 @@
+require_relative 'player'
+require_relative 'board'
+require_relative 'ship'
+
 class Cell
 
   attr_accessor :ship, :status

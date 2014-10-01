@@ -1,4 +1,6 @@
+require_relative 'player'
 require_relative 'cell'
+require_relative 'ship'
 
 class Board
 
@@ -28,7 +30,7 @@ class Board
 
 
 	def coord_converter(coordinate)	
-    coord = [coordinate.split('', 2)[0].upcase.ord - 65, coordinate.split('', 2)[1].to_i - 1]
+    coord = [coordinate.split('', 2)[0].ord - 65, coordinate.split('', 2)[1].to_i - 1]
     return coord if (coord.class == Array && coord[0].is_a?(Integer) && coord[1].is_a?(Integer))
     puts "Invalid coordinate, enter again (format 'A1')"
     coord = STDIN.gets.chomp
