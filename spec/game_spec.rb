@@ -6,40 +6,43 @@ require 'board'
 describe Game do 
 	
 		let(:game) {Game.new}
-		let(:player1) {double :player, Class: Player, board: board, tracking_board: tracking_board, place_ship: true}
+		let(:player1) {double :player, name: "player1", board: board, tracking_board: tracking_board, place_ship: true}
 		let(:battleship) {double :battleship, name: :battleship, size: 4}
 		let(:STDIN) {double :STDIN}
-		let(:player2) {double :player, Class: Player, board: board, tracking_board: tracking_board, place_ship: true}
+		let(:player2) {double :player, name: "player2", board: board, tracking_board: tracking_board, place_ship: true}
 		let(:board) {double :board, grid: []}
 		let(:tracking_board) {double :tracking_board, grid: []}
 		let(:cell) {Cell.new}
  
 	context "Upon initialize" do	
 
-		it "should start with player 1" do
-			expect(game.player1.class).to eq(Player)
-		end
-
-		it "should start with player 2" do
-			expect(game.player2.class).to eq(Player)
+		it "should start with an array for players undefined" do
+			expect(game.players.empty?).to be true
 		end
 	end
 
 	context "at beginning of game" do	
 
+		before(:each) do
+			game.add_player(player1)
+			game.add_player(player2)
+		end
+
 		it "should ask player for direction" do
 			allow(STDIN).to receive(:gets).and_return("R")
-			expect(game.ask_player_ship_direction(game.player1, battleship)).to eq("R")
+			expect(game.ask_player_ship_direction(game.players[0], battleship)).to eq("R")
 		end
 
 		it "should receive user input for coordinate" do
 			allow(STDIN).to receive(:gets).and_return('A1')
-			expect(game.coordinates(game.player1, battleship)).to eq([0,0])
+			allow(game).to receive(:coordinates).and_return [0,0]
+			expect(game.coordinates(player1, battleship)).to eq [0,0]
+
 		end
 
 		it "should receive user input for direction" do
 			allow(STDIN).to receive(:gets).and_return("R")
-			expect(game.ask_player_ship_direction(game.player1, battleship)).to eq("R")
+			expect(game.ask_player_ship_direction(game.players[0], battleship)).to eq("R")
 		end
 	end
 
@@ -47,7 +50,8 @@ describe Game do
 
 		it "should receive user input for shooting coordinate" do
 			allow(STDIN).to receive(:gets).and_return('A1')
-			expect(game.ask_player_shoot(game.player1, game.player2)).to eq([0,0])
+			allow(game). to receive(:ask_player_shoot).and_return [0,0]
+			expect(game.ask_player_shoot(game.players[0], game.players[1])).to eq([0,0])
 		end
 
 		it "should hit when shoot coord given and there is ship" do

@@ -9,4 +9,7 @@ group :development, :test do
   gem 'launchy'
   gem 'rspec'
   gem 'shotgun'
+  gem 'terminal-table'
+  gem 'rackup'
+
 end

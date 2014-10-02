@@ -17,6 +17,7 @@ Feature: Starting a game
 
   Scenario: Registering second player
     Given "Andrew" has registered
-    And I am on the homepage
-    When I register with "James"
+    When I register with name "Michael"
     Then I should see "Let's place your ships!!"
+
+  

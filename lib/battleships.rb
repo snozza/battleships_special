@@ -22,17 +22,38 @@ class BattleShips < Sinatra::Base
   post '/begin' do
      GAME.add_player(Player.new(params[:player]))
      session[:player] = params[:player]
-     redirect '/launch' if GAME.players.count == 2
+     redirect "/deploy/#{session[:player]}" if GAME.players.count == 2
      redirect '/wait'
   end
 
   get '/wait' do
-    redirect '/launch' if GAME.players.count == 2
+    redirect "/deploy/#{session[:player]}" if GAME.players.count == 2
     erb :wait
   end
 
-  get '/launch' do
-    erb :launch
+  get '/deploy/:player' do |player|
+    player = (GAME.players.select {|person| person.name == player})[0]
+    @current_player = player.name
+    @board = player.board
+    @next_ship = player.ships.first
+    erb :deploy
+  end
+
+  post '/deploy/:player' do |player|
+    player = (GAME.players.select {|person| person.name == player})[0]
+    coord = params[:coordinate]
+    direction = params[:direction]
+    ship = player.ships.first
+    GAME.ask_player_place_ship(player, ship, coord, direction)
+    player.ships.delete(ship)
+    redirect '/waiting_to_play' if player.ships.empty?
+    @current_player = player.name
+    @board = player.board
+    @ships = player.ships
+    @next_ship = player.ships.first
+    
+    
+    erb :deploy
   end
 
   # start the server if ruby file executed directly

@@ -1,0 +1,41 @@
+<h2>Let's place your ships!!</h2>
+<h3>Hi <%= @current_player %></h3>
+<h4>Ship to place: <%= @next_ship.name %> </h4>
+
+<form name="deployment" action=<%= "/deploy/#{@current_player}"%> method="post">
+    <label for="coordinate">Coordinate</label>
+    <input type="text" name="coordinate">
+    <label for="direction">Direction</label>
+    <input type="text" name="direction">
+    <button>Submit!</button>
+</form>
+
+
+<section>
+    <table>
+    <tr>
+      <th></td>
+      <th>A</td>
+      <th>B</td>
+      <th>C</td>
+      <th>D</td>
+      <th>E</td>
+      <th>F</td>
+      <th>G</td>
+      <th>H</td>
+      <th>I</td>
+      <th>J</td>
+    </tr>  
+
+    <tr>
+        <% index = 0
+          @board.grid.each do |row|
+            index += 1%>
+            <td><%= index %></td>
+        <% row.each do |column| %></td>
+            <td><%= column %></td>
+        <% end %>
+    </tr>
+    <% end %>
+    </table>
+</section>    

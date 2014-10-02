@@ -19,20 +19,19 @@ When(/^I click "(.*?)"$/) do |button|
 end
 
 Given(/^"(.*?)" has registered$/) do |player|
-  visit '/'
+  visit '/' 
 end
 
-Given(/^I am registered as "(.*?)"$/) do |name|
+When(/^I register with name "(.*?)"$/) do |name|
   register(name)
 end
 
-When(/^"(.*?)" registers$/) do |name|
-  register(name)
+Given(/^I am on the place ships page$/) do
+  register("Andrew")
+  register("Michael")
+  visit '/deploy/Michael'
 end
 
-When(/^I register with "(.*?)"$/) do |name|
-  register(name)
-end
 
 def register(player)
   visit '/'

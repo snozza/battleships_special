@@ -15,84 +15,58 @@ class Game
 		players << player
 	end
 
-	def play
-		winner = false
-		ask_player_place_ship(players[0], players[1].ships)
-		ask_player_place_ship(players[1], players[1].ships)
-		while winner == false
-			winner = play_round(players[0], players[1]); break if winner
-			winner = play_round(players[1], players[0])
-		end
-		puts "The winner is #{winner}!!!"
-	end
-
-	def ask_player_place_ship(player, ships)
-		player.ships.each do |ship|
-			player.print_boards(player.board)
-			coord = coordinates(player, ship)
-			direction = ask_player_ship_direction(player, ship)
+	def ask_player_place_ship(player, ship, coord, direction)
+			coord = coordinates(player, ship, coord)
+			direction = verify_direction(direction)
 			if player.board.board_fit?(ship, coord, direction) && !player.board.ship_clash?(ship, coord, direction)
 						player.board.place_ship(ship, coord, direction)
 			else
-				puts "Ship wont fit. Try again."; redo
+				raise "Ship doesn't fit"
 			end
-		end
 	end
 
 	def play_round(player, opponent)
 		player.print_boards(player.board)
 		player.print_boards(player.tracking_board)
-		x, y = ask_player_shoot(player, opponent)
-		if !opponent.board.grid[x][y].ship.nil?
-			ship_hit(player, opponent, x, y)
+		y, x = ask_player_shoot(player, opponent)
+		if !opponent.board.grid[y][x].ship.nil?
+			ship_hit(player, opponent, y, x)
 		else
-			ship_miss(player, opponent, x, y)
+			ship_miss(player, opponent, y, x)
 		end
 		return opponent.ships_left == 0 ? player.name : false  
 		end
 
 	def ship_status(ship)
-		if ship.sunk?
-			puts "You SUNK #{ship.name}!!!"
-			true
-		else
-			puts "You hit #{ship.name}!!!"
-			false
-		end
+		ship.sunk? ? true : false
 	end
 
-	def coordinates(player, ship)
-		coord = STDIN.gets.chomp.upcase
-		x, y = player.board.coord_converter(coord)
-		return x, y if (0..9).include?(x) && (0..9).include?(y)
-			puts "Please enter valid coordinate!" 
-			coordinates(player, ship)
-		end
+	def coordinates(player, ship, coord)
+		y, x = player.board.coord_converter(coord)
+		return y, x if (0..9).include?(x) && (0..9).include?(y)
+		raise error "invalid coordinates"
+	end
 
-	def ask_player_ship_direction(player, ship)
-		direction = STDIN.gets.chomp.upcase
+	def verify_direction(direction)
 		return direction if direction == "D" || direction == "R"
-		puts "Please enter valid direction"
-		ask_player_ship_direction(player, ship)
+		raise "Error, invalid direction"
 	end
 
 	def ask_player_shoot(player, opponent)
-		coord = STDIN.gets.chomp.upcase
-		x, y = player.board.coord_converter(coord)
-		return x, y if (0..9).include?(x) && (0..9).include?(y) && opponent.board.grid[x][y].status == :empty
+		y, x = player.board.coord_converter(coord)
+		return y, x if (0..9).include?(x) && (0..9).include?(y) && opponent.board.grid[y][x].status == :empty
 		ask_player_shoot(player, opponent)
 	end
 
-	def ship_hit(player, opponent, x, y)
-		player.tracking_board.update_tracking_board(x, y, :hit)
-		opponent.board.shoot_at(x, y)
-		opponent.ships_left -= 1 if ship_status(opponent.board.grid[x][y].ship)
+	def ship_hit(player, opponent, y, x)
+		player.tracking_board.update_tracking_board(y, x, :hit)
+		opponent.board.shoot_at(y, x)
+		opponent.ships_left -= 1 if ship_status(opponent.board.grid[y][x].ship)
 	end
 
-	def ship_miss(player, opponent, x, y)
-		player.tracking_board.update_tracking_board(x, y, :miss)
-		opponent.board.shoot_at(x, y)
-		puts "Miss!!"
+	def ship_miss(player, opponent, y, x)
+		player.tracking_board.update_tracking_board(y, x, :miss)
+		opponent.board.shoot_at(y, x)
 		end
 	end
 
