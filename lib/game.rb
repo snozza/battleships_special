@@ -44,12 +44,20 @@ class Game
 		raise error "invalid coordinates"
 	end
 
+	def my_opponent(person)
+		players.select {|player| player != person}[0]
+	end
 	
-
-	def ask_player_shoot(player, opponent)
-		y, x = coord_converter(coord)
-		return y, x if (0..9).include?(x) && (0..9).include?(y) && opponent.board.grid[y][x].status == :empty
-		ask_player_shoot(player, opponent)
+	def shoot(coordinate, opponent, player)
+		y, x = coordinate
+		return false if !opponent.board.grid[y][x].status == :empty
+		if !opponent.board.grid[y][x].ship.nil?
+			ship_hit(player, opponent, y, x)
+			:Hit!
+		else
+			ship_miss(player, opponent, y, x)
+			:Miss!
+		end
 	end
 
 	def ship_hit(player, opponent, y, x)

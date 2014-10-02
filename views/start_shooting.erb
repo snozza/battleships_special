@@ -1,1 +1,70 @@
 <h2>Let's Shoot!</h2>
+
+<h3>Place your shot <%= @attacker %></h3>
+<h4>Your nemesis <%= @opponent.name %> is waiting!</h4>
+
+<form name="shoot" action=<%="/start_shooting/#{@attacker}"%> method="post">
+    <label for="coordinate">Coordinate</label>
+    <input type="text" name="coordinate" placeholder="e.g. C4" autofocus>
+    <button>Fire Away!</button>
+</form>
+
+<h4>Shooting Board</h4>
+<section>
+    <table>
+    <tr>
+      <th></td>
+      <th>A</td>
+      <th>B</td>
+      <th>C</td>
+      <th>D</td>
+      <th>E</td>
+      <th>F</td>
+      <th>G</td>
+      <th>H</td>
+      <th>I</td>
+      <th>J</td>
+    </tr>  
+
+    <tr>
+        <% index = 0
+          @shooting_board.grid.each do |row|
+            index += 1%>
+            <td><%= index %></td>
+        <% row.each do |column| %></td>
+            <td><%= column %></td>
+        <% end %>
+    </tr>
+    <% end %>
+    </table>
+</section>
+
+<h5>Your Board</h5>
+<section>
+    <table>
+    <tr>
+      <th></td>
+      <th>A</td>
+      <th>B</td>
+      <th>C</td>
+      <th>D</td>
+      <th>E</td>
+      <th>F</td>
+      <th>G</td>
+      <th>H</td>
+      <th>I</td>
+      <th>J</td>
+    </tr>  
+
+    <tr>
+        <% index = 0
+          @player_board.grid.each do |row|
+            index += 1%>
+            <td><%= index %></td>
+        <% row.each do |column| %></td>
+            <td><%= column %></td>
+        <% end %>
+    </tr>
+    <% end %>
+    </table>
+</section>  

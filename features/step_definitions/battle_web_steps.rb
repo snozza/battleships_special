@@ -30,6 +30,7 @@ Given(/^I am on the place ships page$/) do
   register("Andrew")
   register("Michael")
   visit '/deploy/Michael'
+  
 end
 
 Given(/^I place all of my ships$/) do
@@ -48,15 +49,22 @@ When(/^I place my ships$/) do
   place_a_ship("A1", "D")
   place_a_ship("E1", "D")
   place_a_ship("F1", "D")
+  place_a_ship("G1", "D")
 end
 
-When(/^all ships have been placed$/) do
-  visit '/deploy/Michael'
-  place_all_ships
-  visit '/deploy/Andrew'
+Given(/^both players are registered$/) do
+  register("Andrew")
+  register("Michael")
+end
+
+When(/^"(.*?)" places all of his ships$/) do |name|
+  visit "/deploy/#{name}"
   place_all_ships
 end
 
+Given(/^I am on the shoot page$/) do
+  visit '/start_shooting/Andrew'
+end
 
 def place_a_ship(coord, direct)
   fill_in("coordinate", :with => coord)

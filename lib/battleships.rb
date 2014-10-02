@@ -57,12 +57,31 @@ class BattleShips < Sinatra::Base
   end
 
   get '/deploy_wait/:player' do |player|
-    redirect '/start_shooting/:player' if all_ships_deployed?
+    redirect "/start_shooting/#{player}" if all_ships_deployed?
     erb :deploy_wait
   end
 
   get '/start_shooting/:player' do |player|
+    player = (GAME.players.select {|person| person.name == player})[0]
+    @attacker = player.name
+    @opponent = GAME.my_opponent(player)
+    @player_board = player.board
+    @shooting_board = player.tracking_board
     erb :start_shooting
+  end
+
+  post '/start_shooting/:player' do |player|
+    player = (GAME.players.select {|person| person.name == player})[0]
+    coordinate = GAME.coord_converter(params[:coordinate])
+    redirect "/start_shooting/#{player.name}" if !coordinate
+    shot_status = GAME.shoot(coordinate, GAME.my_opponent(player), player)
+    redirect "/start_shooting/#{player.name}" if !shot_status
+    redirect "/shoot_wait/#{player.name}/#{shot_status}"
+  end
+
+  get '/shoot_wait/:player/:result' do |player, result|
+    @result = result
+    erb :shoot_wait
   end
 
   def all_ships_deployed?
