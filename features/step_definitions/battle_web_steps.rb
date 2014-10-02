@@ -32,6 +32,16 @@ Given(/^I am on the place ships page$/) do
   visit '/deploy/Michael'
 end
 
+Given(/^I place all of my ships$/) do
+  visit '/deploy/Andrew'
+  place_all_ships
+end
+
+def place_a_ship(coord, direct)
+  fill_in("coordinate", :with => coord)
+  fill_in("direction", :with => direct)
+  click_on "Submit!"
+end
 
 def register(player)
   visit '/'
@@ -39,3 +49,13 @@ def register(player)
   fill_in("player", :with => player)
   click_on("Submit")
 end
+
+def place_all_ships
+  place_a_ship("A1", "D")
+  place_a_ship("E1", "D")
+  place_a_ship("F1", "D")
+  place_a_ship("G1", "D")
+  place_a_ship("H1", "D")
+  save_and_open_page
+end
+

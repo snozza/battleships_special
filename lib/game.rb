@@ -2,10 +2,13 @@ require_relative 'player'
 require_relative 'board'
 require_relative 'ship'
 require_relative 'cell'
+require_relative 'coord_checker'
 
 class Game
 	
 	attr_accessor :players
+
+	include CoordChecker
 
 	def initialize
 		@players = []
@@ -16,13 +19,7 @@ class Game
 	end
 
 	def ask_player_place_ship(player, ship, coord, direction)
-			coord = coordinates(player, ship, coord)
-			direction = verify_direction(direction)
-			if player.board.board_fit?(ship, coord, direction) && !player.board.ship_clash?(ship, coord, direction)
-						player.board.place_ship(ship, coord, direction)
-			else
-				raise "Ship doesn't fit"
-			end
+			player.board.place_ship(ship, coord, direction)
 	end
 
 	def play_round(player, opponent)
@@ -42,18 +39,15 @@ class Game
 	end
 
 	def coordinates(player, ship, coord)
-		y, x = player.board.coord_converter(coord)
+		y, x = coord_converter(coord)
 		return y, x if (0..9).include?(x) && (0..9).include?(y)
 		raise error "invalid coordinates"
 	end
 
-	def verify_direction(direction)
-		return direction if direction == "D" || direction == "R"
-		raise "Error, invalid direction"
-	end
+	
 
 	def ask_player_shoot(player, opponent)
-		y, x = player.board.coord_converter(coord)
+		y, x = coord_converter(coord)
 		return y, x if (0..9).include?(x) && (0..9).include?(y) && opponent.board.grid[y][x].status == :empty
 		ask_player_shoot(player, opponent)
 	end

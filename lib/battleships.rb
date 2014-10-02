@@ -40,20 +40,24 @@ class BattleShips < Sinatra::Base
   end
 
   post '/deploy/:player' do |player|
+    coordinate = GAME.coord_converter(params[:coordinate])
+    direction = GAME.verify_direction(params[:direction])
     player = (GAME.players.select {|person| person.name == player})[0]
-    coord = params[:coordinate]
-    direction = params[:direction]
     ship = player.ships.first
-    GAME.ask_player_place_ship(player, ship, coord, direction)
+    redirect "/deploy/#{player.name}" if !GAME.placement_check(ship, coordinate, direction, player)
+    
+    GAME.ask_player_place_ship(player, ship, coordinate, direction)
     player.ships.delete(ship)
-    redirect '/waiting_to_play' if player.ships.empty?
+    redirect '/deploy_wait' if player.ships.empty?
     @current_player = player.name
     @board = player.board
     @ships = player.ships
     @next_ship = player.ships.first
-    
-    
     erb :deploy
+  end
+
+  get '/deploy_wait' do
+    erb :deploy_wait
   end
 
   # start the server if ruby file executed directly
