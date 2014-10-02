@@ -43,6 +43,16 @@ Given(/^"(.*?)" is on the deploy wait page$/) do |name|
   visit '/deploy_wait'
 end
 
+Given(/^I am on the waiting to shoot page$/) do
+  visit '/shoot_wait/Andrew/start'
+end
+
+When(/^it is my turn$/) do
+  visit '/start_shooting/Andrew'
+  save_and_open_page
+end
+
+
 When(/^I place my ships$/) do
   visit '/deploy/Michael'
   place_a_ship("H1", "D")

@@ -22,17 +22,9 @@ class Game
 			player.board.place_ship(ship, coord, direction)
 	end
 
-	def play_round(player, opponent)
-		player.print_boards(player.board)
-		player.print_boards(player.tracking_board)
-		y, x = ask_player_shoot(player, opponent)
-		if !opponent.board.grid[y][x].ship.nil?
-			ship_hit(player, opponent, y, x)
-		else
-			ship_miss(player, opponent, y, x)
-		end
-		return opponent.ships_left == 0 ? player.name : false  
-		end
+	def turns
+		players.rotate!
+	end
 
 	def ship_status(ship)
 		ship.sunk? ? true : false
@@ -52,8 +44,7 @@ class Game
 		y, x = coordinate
 		return false if !opponent.board.grid[y][x].status == :empty
 		if !opponent.board.grid[y][x].ship.nil?
-			ship_hit(player, opponent, y, x)
-			:Hit!
+			sink_check(y, x, opponent, player)
 		else
 			ship_miss(player, opponent, y, x)
 			:Miss!
@@ -69,6 +60,17 @@ class Game
 	def ship_miss(player, opponent, y, x)
 		player.tracking_board.update_tracking_board(y, x, :miss)
 		opponent.board.shoot_at(y, x)
-		end
 	end
+
+	def sink_check(y, x, opponent, player)
+		ship_hit(player, opponent, y, x)
+		opponent.board.grid[y][x].ship.sunk? ? :Sunk! : :Hit!
+	end
+
+	def ship_finder(coordinate, player)
+		y, x = coordinate
+		player.board.grid[y][x].ship
+	end
+
+end
 

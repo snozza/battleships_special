@@ -2,13 +2,16 @@
 
 <h2>
 
-    <% if !@result %>
+    <% if @result == "start"%>
+          Almost ready.....
     <% elsif @result == "Hit!" %>
           You HIT your opponent's ship!!!
+    <% elsif @result == "Sunk!" %>
+          You Sunk <%= @ship %> !!!!!!
     <% else %>
           You Suck!! That was a miss....
     <% end %>
    
 
-<h3> You took your shot, now waiting! </h3>
+<h3> Waiting to shoot! </h3>
  

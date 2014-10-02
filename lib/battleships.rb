@@ -41,7 +41,8 @@ class BattleShips < Sinatra::Base
 
   post '/deploy/:player' do |player|
     coordinate = GAME.coord_converter(params[:coordinate])
-    direction = GAME.verify_direction(params[:direction])
+    redirect "/deploy/#{player}" if coordinate.nil?
+    direction = params[:direction]
     player = (GAME.players.select {|person| person.name == player})[0]
     ship = player.ships.first
     redirect "/deploy/#{player.name}" if !GAME.placement_check(ship, coordinate, direction, player)
@@ -57,7 +58,8 @@ class BattleShips < Sinatra::Base
   end
 
   get '/deploy_wait/:player' do |player|
-    redirect "/start_shooting/#{player}" if all_ships_deployed?
+    redirect "/start_shooting/#{player}" if all_ships_deployed? && my_turn?(player)
+    redirect "/shoot_wait/#{player}/start/none" if all_ships_deployed? && !my_turn?(player)
     erb :deploy_wait
   end
 
@@ -74,14 +76,33 @@ class BattleShips < Sinatra::Base
     player = (GAME.players.select {|person| person.name == player})[0]
     coordinate = GAME.coord_converter(params[:coordinate])
     redirect "/start_shooting/#{player.name}" if !coordinate
-    shot_status = GAME.shoot(coordinate, GAME.my_opponent(player), player)
+    opponent = GAME.my_opponent(player)
+    shot_status = GAME.shoot(coordinate, opponent, player)
+    ship = shot_status == :Sunk! ? GAME.ship_finder(coordinate, opponent).name : "none" 
     redirect "/start_shooting/#{player.name}" if !shot_status
-    redirect "/shoot_wait/#{player.name}/#{shot_status}"
+    redirect "/winner/#{player.name}" if opponent.ships_left == 0
+    GAME.turns
+    redirect "/shoot_wait/#{player.name}/#{shot_status}/#{ship}"
   end
 
-  get '/shoot_wait/:player/:result' do |player, result|
+  get '/shoot_wait/:player/:result/:ship' do |player, result, ship|
+    @ship = ship
     @result = result
+    redirect "/start_shooting/#{player}" if my_turn?(player)
+    redirect "/loser/#{player}" if GAME.players[1].ships_left == 0
     erb :shoot_wait
+  end
+
+  get '/loser/:player' do |player|
+    @player = player
+    @opponent = GAME.my_opponent(player)
+    erb :loser
+  end
+
+  get '/winner/:player' do |player|
+    @player = player
+    @opponent = GAME.my_opponent(player).name
+    erb :winner
   end
 
   def all_ships_deployed?
@@ -90,6 +111,11 @@ class BattleShips < Sinatra::Base
     end
     true
   end
+
+  def my_turn?(player)
+    GAME.players[0].name == player
+  end
+
 
   # start the server if ruby file executed directly
   run! if app_file == $0
