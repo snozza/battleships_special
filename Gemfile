@@ -11,5 +11,6 @@ group :development, :test do
   gem 'shotgun'
   gem 'terminal-table'
   gem 'rackup'
+  gem 'rack-flash3'
 
 end

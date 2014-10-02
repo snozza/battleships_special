@@ -2,8 +2,7 @@ module CoordChecker
 
   DIMENSION = 10
 
-  def coord_converter(coordinate=nil)
-    return [100, 100] if coordinate.nil?
+  def coord_converter(coordinate=Z20)
     coord = [coordinate.split('', 2)[1].to_i - 1, coordinate.split('', 2)[0].upcase.ord - 65]
     return coord if (coord.class == Array && coord[0].is_a?(Integer) && coord[1].is_a?(Integer))
   end

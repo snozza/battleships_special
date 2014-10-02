@@ -1,4 +1,5 @@
 require 'sinatra/base'
+require 'rack-flash'
 require_relative 'game'
 
 class BattleShips < Sinatra::Base
@@ -6,6 +7,7 @@ class BattleShips < Sinatra::Base
   GAME = Game.new
 
   enable :sessions
+  use Rack::Flash
   set :session_secret, "I'm starting with the man in the mirror"
   set :views, Proc.new {File.join(root, '..', "views")}
   set :public_dir, Proc.new {File.join(root, '..', "public")}
@@ -20,10 +22,12 @@ class BattleShips < Sinatra::Base
   end
 
   post '/begin' do
-     GAME.add_player(Player.new(params[:player]))
-     session[:player] = params[:player]
-     redirect "/deploy/#{session[:player]}" if GAME.players.count == 2
-     redirect '/wait'
+    flash[:errors] = "Need to enter a name"
+    redirect '/begin' if params[:player] == ""
+    GAME.add_player(Player.new(params[:player]))
+    session[:player] = params[:player]
+    redirect "/deploy/#{session[:player]}" if GAME.players.count == 2
+    redirect '/wait'
   end
 
   get '/wait' do
@@ -40,6 +44,8 @@ class BattleShips < Sinatra::Base
   end
 
   post '/deploy/:player' do |player|
+    flash[:error] = "You to enter a valid coordinate"
+    redirect "/deploy/#{player}" if params[:coordinate] == ""
     coordinate = GAME.coord_converter(params[:coordinate])
     redirect "/deploy/#{player}" if coordinate.nil?
     direction = params[:direction]
