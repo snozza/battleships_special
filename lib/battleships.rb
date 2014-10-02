@@ -48,7 +48,7 @@ class BattleShips < Sinatra::Base
     
     GAME.ask_player_place_ship(player, ship, coordinate, direction)
     player.ships.delete(ship)
-    redirect '/deploy_wait' if player.ships.empty?
+    redirect "/deploy_wait/#{player.name}" if player.ships.empty?
     @current_player = player.name
     @board = player.board
     @ships = player.ships
@@ -56,10 +56,24 @@ class BattleShips < Sinatra::Base
     erb :deploy
   end
 
-  get '/deploy_wait' do
+  get '/deploy_wait/:player' do |player|
+    redirect '/start_shooting/:player' if all_ships_deployed?
     erb :deploy_wait
+  end
+
+  get '/start_shooting/:player' do |player|
+    erb :start_shooting
+  end
+
+  def all_ships_deployed?
+    GAME.players.each do |player|
+      return false if !player.ships.empty?
+    end
+    true
   end
 
   # start the server if ruby file executed directly
   run! if app_file == $0
 end
+
+

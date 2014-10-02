@@ -34,8 +34,29 @@ end
 
 Given(/^I place all of my ships$/) do
   visit '/deploy/Andrew'
+  place_a_ship("H1", "D")
   place_all_ships
 end
+
+Given(/^"(.*?)" is on the deploy wait page$/) do |name|
+  visit '/deploy_wait'
+end
+
+When(/^I place my ships$/) do
+  visit '/deploy/Michael'
+  place_a_ship("H1", "D")
+  place_a_ship("A1", "D")
+  place_a_ship("E1", "D")
+  place_a_ship("F1", "D")
+end
+
+When(/^all ships have been placed$/) do
+  visit '/deploy/Michael'
+  place_all_ships
+  visit '/deploy/Andrew'
+  place_all_ships
+end
+
 
 def place_a_ship(coord, direct)
   fill_in("coordinate", :with => coord)
@@ -51,11 +72,10 @@ def register(player)
 end
 
 def place_all_ships
+  place_a_ship("H1", "D")
   place_a_ship("A1", "D")
   place_a_ship("E1", "D")
   place_a_ship("F1", "D")
   place_a_ship("G1", "D")
-  place_a_ship("H1", "D")
-  save_and_open_page
 end
 
