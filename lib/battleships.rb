@@ -30,9 +30,9 @@ class BattleShips < Sinatra::Base
       flash[:error] = "Need to enter a name"
       redirect '/begin'
     end
-    player = name_converter(params[:player])
+    player = Player.new(params[:player])
+    session[:player] = player.object_id.inspect
     add_player(player)
-    session[:player] = player
     redirect "/deploy/#{session[:player]}" if game_ready?
     redirect '/wait'
   end
@@ -45,7 +45,6 @@ class BattleShips < Sinatra::Base
   get '/deploy/:player' do |player|
     player = player_select(player)
     @current_player = player.name
-    @display_name = get_name(player)
     @board = player.board
     @next_ship = player.ships.first
     erb :deploy
@@ -65,8 +64,8 @@ class BattleShips < Sinatra::Base
     place_ship(player, ship, coordinate, direction)
     player.ships.delete(ship)
     redirect "/deploy_wait/#{player.name}" if player.ships.empty?
-    @current_player = player.name
-    @display_name = get_name(player)
+    @current_player = player.object_id
+    @display_name = player.name
     @board = player.board
     @ships = player.ships
     @next_ship = player.ships.first
@@ -81,9 +80,9 @@ class BattleShips < Sinatra::Base
 
   get '/start_shooting/:player' do |player|
     player = player_select(player)
-    @attacker = player.name
-    @display_name = get_name(player)
-    @opponent = get_name(find_opponent(player))
+    @attacker = player.object_id
+    @display_name = player.name
+    @opponent = find_opponent(player)
     @player_board = player.board
     @shooting_board = player.tracking_board
     erb :start_shooting
@@ -99,10 +98,10 @@ class BattleShips < Sinatra::Base
     opponent = find_opponent(player)
     shot_status = fire!(coordinate, opponent, player)
     ship = shot_status == :Sunk! ? find_ship(coordinate, opponent).name : "none" 
-    redirect "/start_shooting/#{player.name}" if !shot_status
-    redirect "/winner/#{player.name}" if opponent.ships_left == 0
+    redirect "/start_shooting/#{player.objcet_id}" if !shot_status
+    redirect "/winner/#{player.object_id}" if opponent.ships_left == 0
     GAME.turns
-    redirect "/shoot_wait/#{player.name}/#{shot_status}/#{ship}"
+    redirect "/shoot_wait/#{player.object_id}/#{shot_status}/#{ship}"
   end
 
   get '/shoot_wait/:player/:result/:ship' do |player, result, ship|
@@ -115,15 +114,15 @@ class BattleShips < Sinatra::Base
 
   get '/loser/:player' do |player|
     player = player_select(player)
-    @opponent = get_name(find_opponent(player))
-    @player = get_name(player)
+    @opponent = find_opponent(player)
+    @player = player.name
     erb :loser
   end
 
   get '/winner/:player' do |player|
     player = player_select(player)
-    @opponent = get_name(find_opponent(player))
-    @player = get_name(player)
+    @opponent = find_opponent(player)
+    @player = player.name
     erb :winner
   end
 
@@ -135,11 +134,11 @@ class BattleShips < Sinatra::Base
   end
 
   def my_turn?(player)
-    GAME.players[0].name == player
+    GAME.players[0].object_id == player
   end
 
   def player_select(player)
-    (GAME.players.select {|person| person.name == player})[0]
+    (GAME.players.select {|person| person.object_id.inspect == player})[0]
   end
 
   def find_opponent(player)
@@ -163,7 +162,7 @@ class BattleShips < Sinatra::Base
   end
 
   def add_player(player)
-    GAME.add_player(Player.new(player))
+    GAME.add_player(player)
   end
 
   def find_ship(coordinate, opponent)
@@ -176,7 +175,6 @@ class BattleShips < Sinatra::Base
 
   def name_converter(player)
     player = player.gsub(/[^A-Za-z\s]/, "").strip
-    player = player.gsub(/\s/, "_")
   end
 
   def valid_coord(coordinate)
