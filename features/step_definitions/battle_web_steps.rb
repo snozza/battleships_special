@@ -49,7 +49,6 @@ end
 
 When(/^it is my turn$/) do
   visit '/start_shooting/Andrew'
-  save_and_open_page
 end
 
 

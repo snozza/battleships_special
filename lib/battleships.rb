@@ -50,7 +50,7 @@ class BattleShips < Sinatra::Base
       flash[:error] = "You need to enter a coordinate and a direction"
       redirect "/deploy/#{player}"
     end
-    coordinate = GAME.coord_converter(params[:coordinate])
+    coordinate = receive_coord(params[:coordinate])
     direction = params[:direction]
     player = player_select(player)
     ship = player.ships.first
@@ -75,7 +75,7 @@ class BattleShips < Sinatra::Base
   get '/start_shooting/:player' do |player|
     player = player_select(player)
     @attacker = player.name
-    @opponent = GAME.my_opponent(player)
+    @opponent = find_opponent(player)
     @player_board = player.board
     @shooting_board = player.tracking_board
     erb :start_shooting
@@ -87,9 +87,9 @@ class BattleShips < Sinatra::Base
       redirect "/start_shooting/#{player}"
     end
     player = player_select(player)
-    coordinate = GAME.coord_converter(params[:coordinate])
-    opponent = GAME.my_opponent(player)
-    shot_status = GAME.shoot(coordinate, opponent, player)
+    coordinate = receive_coord(params[:coordinate])
+    opponent = find_opponent(player)
+    shot_status = fire!(coordinate, opponent, player)
     ship = shot_status == :Sunk! ? GAME.ship_finder(coordinate, opponent).name : "none" 
     redirect "/start_shooting/#{player.name}" if !shot_status
     redirect "/winner/#{player.name}" if opponent.ships_left == 0
@@ -135,6 +135,15 @@ class BattleShips < Sinatra::Base
   def find_opponent(player)
     GAME.my_opponent(player)
   end
+
+  def fire!(coordinate, opponent, player)
+    GAME.shoot(coordinate, opponent, player)
+  end
+
+  def receive_coord(coordinate)
+    GAME.coord_converter(params[:coordinate])
+  end
+
 
 
   # start the server if ruby file executed directly
