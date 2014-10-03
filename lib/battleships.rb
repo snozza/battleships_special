@@ -28,12 +28,12 @@ class BattleShips < Sinatra::Base
     end
     GAME.add_player(Player.new(params[:player]))
     session[:player] = params[:player]
-    redirect "/deploy/#{session[:player]}" if GAME.players.count == 2
+    redirect "/deploy/#{session[:player]}" if game_ready?
     redirect '/wait'
   end
 
   get '/wait' do
-    redirect "/deploy/#{session[:player]}" if GAME.players.count == 2
+    redirect "/deploy/#{session[:player]}" if game_ready?
     erb :wait
   end
 
@@ -54,9 +54,9 @@ class BattleShips < Sinatra::Base
     direction = params[:direction]
     player = player_select(player)
     ship = player.ships.first
-    redirect "/deploy/#{player.name}" if !GAME.placement_check(ship, coordinate, direction, player)
+    redirect "/deploy/#{player.name}" if !placement_check(ship, coordinate, direction, player)
     
-    GAME.ask_player_place_ship(player, ship, coordinate, direction)
+    place_ship(player, ship, coordinate, direction)
     player.ships.delete(ship)
     redirect "/deploy_wait/#{player.name}" if player.ships.empty?
     @current_player = player.name
@@ -144,7 +144,17 @@ class BattleShips < Sinatra::Base
     GAME.coord_converter(params[:coordinate])
   end
 
+  def game_ready?
+    GAME.players.count == 2
+  end
 
+  def placement_check(ship, coordinate, direction, player)
+    GAME.placement_check(ship, coordinate, direction, player)
+  end
+
+  def place_ship(player, ship, coordinate, direction)
+    GAME.ask_player_place_ship(player, ship, coordinate, direction)
+  end
 
   # start the server if ruby file executed directly
   run! if app_file == $0
