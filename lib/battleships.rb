@@ -7,7 +7,7 @@ class BattleShips < Sinatra::Base
   GAME = Game.new
 
   enable :sessions
-  use Rack::Flash
+  use Rack::Flash, :sweep => true
   set :session_secret, "I'm starting with the man in the mirror"
   set :views, Proc.new {File.join(root, '..', "views")}
   set :public_dir, Proc.new {File.join(root, '..', "public")}
@@ -22,8 +22,10 @@ class BattleShips < Sinatra::Base
   end
 
   post '/begin' do
-    flash[:errors] = "Need to enter a name"
-    redirect '/begin' if params[:player] == ""
+    if params[:player] == ""
+      flash[:error] = "Need to enter a name"
+      redirect '/begin'
+    end
     GAME.add_player(Player.new(params[:player]))
     session[:player] = params[:player]
     redirect "/deploy/#{session[:player]}" if GAME.players.count == 2
@@ -44,10 +46,11 @@ class BattleShips < Sinatra::Base
   end
 
   post '/deploy/:player' do |player|
-    flash[:error] = "You to enter a valid coordinate"
-    redirect "/deploy/#{player}" if params[:coordinate] == ""
+    if params[:coordinate] == "" || params[:direction] == ""
+      flash[:error] = "You need to enter a coordinate and a direction"
+      redirect "/deploy/#{player}"
+    end
     coordinate = GAME.coord_converter(params[:coordinate])
-    redirect "/deploy/#{player}" if coordinate.nil?
     direction = params[:direction]
     player = (GAME.players.select {|person| person.name == player})[0]
     ship = player.ships.first
@@ -79,9 +82,12 @@ class BattleShips < Sinatra::Base
   end
 
   post '/start_shooting/:player' do |player|
+    if params[:coordinate] == ""
+      flash[:error] = "You need to enter a coordinate"
+      redirect "/start_shooting/#{player}"
+    end
     player = (GAME.players.select {|person| person.name == player})[0]
     coordinate = GAME.coord_converter(params[:coordinate])
-    redirect "/start_shooting/#{player.name}" if !coordinate
     opponent = GAME.my_opponent(player)
     shot_status = GAME.shoot(coordinate, opponent, player)
     ship = shot_status == :Sunk! ? GAME.ship_finder(coordinate, opponent).name : "none" 

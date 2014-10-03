@@ -1,6 +1,9 @@
 <h2>Let's place your ships!!</h2>
 <h3>Hi <%= @current_player %></h3>
 <h4>Ship to place: <%= @next_ship.name %> </h4>
+<% if flash[:error] %>
+    <%= flash[:error] %>
+<% end %>
 
 <form name="deployment" action=<%= "/deploy/#{@current_player}"%> method="post">
     <label for="coordinate">Coordinate</label>

@@ -1,3 +1,7 @@
+<% if flash[:error] %>
+<%= flash[:error] %>
+<% end %>
+
 <form name="new-player" action="begin" method="post"
         <h2> What's your name? </h2>
         <input type="text" name="player" placeholder="player name" autofocus>
