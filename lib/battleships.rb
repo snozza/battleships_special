@@ -38,7 +38,7 @@ class BattleShips < Sinatra::Base
   end
 
   get '/deploy/:player' do |player|
-    player = (GAME.players.select {|person| person.name == player})[0]
+    player = player_select(player)
     @current_player = player.name
     @board = player.board
     @next_ship = player.ships.first
@@ -52,7 +52,7 @@ class BattleShips < Sinatra::Base
     end
     coordinate = GAME.coord_converter(params[:coordinate])
     direction = params[:direction]
-    player = (GAME.players.select {|person| person.name == player})[0]
+    player = player_select(player)
     ship = player.ships.first
     redirect "/deploy/#{player.name}" if !GAME.placement_check(ship, coordinate, direction, player)
     
@@ -73,7 +73,7 @@ class BattleShips < Sinatra::Base
   end
 
   get '/start_shooting/:player' do |player|
-    player = (GAME.players.select {|person| person.name == player})[0]
+    player = player_select(player)
     @attacker = player.name
     @opponent = GAME.my_opponent(player)
     @player_board = player.board
@@ -86,7 +86,7 @@ class BattleShips < Sinatra::Base
       flash[:error] = "You need to enter a coordinate"
       redirect "/start_shooting/#{player}"
     end
-    player = (GAME.players.select {|person| person.name == player})[0]
+    player = player_select(player)
     coordinate = GAME.coord_converter(params[:coordinate])
     opponent = GAME.my_opponent(player)
     shot_status = GAME.shoot(coordinate, opponent, player)
@@ -101,19 +101,19 @@ class BattleShips < Sinatra::Base
     @ship = ship
     @result = result
     redirect "/start_shooting/#{player}" if my_turn?(player)
-    redirect "/loser/#{player}" if GAME.players[1].ships_left == 0
+    redirect "/loser/#{player}" if player_select(player).ships_left == 0
     erb :shoot_wait
   end
 
   get '/loser/:player' do |player|
     @player = player
-    @opponent = GAME.my_opponent(player)
+    @opponent = find_opponent(player).name
     erb :loser
   end
 
   get '/winner/:player' do |player|
     @player = player
-    @opponent = GAME.my_opponent(player).name
+    @opponent = find_opponent(player).name
     erb :winner
   end
 
@@ -126,6 +126,14 @@ class BattleShips < Sinatra::Base
 
   def my_turn?(player)
     GAME.players[0].name == player
+  end
+
+  def player_select(player)
+    (GAME.players.select {|person| person.name == player})[0]
+  end
+
+  def find_opponent(player)
+    GAME.my_opponent(player)
   end
 
 
