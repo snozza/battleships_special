@@ -30,19 +30,13 @@ class Game
 		ship.sunk? ? true : false
 	end
 
-	def coordinates(player, ship, coord)
-		y, x = coord_converter(coord)
-		return y, x if (0..9).include?(x) && (0..9).include?(y)
-		raise error "invalid coordinates"
-	end
-
 	def my_opponent(person)
 		players.select {|player| player != person}[0]
 	end
 	
 	def shoot(coordinate, opponent, player)
 		y, x = coordinate
-		return false if !opponent.board.grid[y][x].status == :empty
+		return false if opponent.board.grid[y][x].status != :empty
 		if !opponent.board.grid[y][x].ship.nil?
 			sink_check(y, x, opponent, player)
 		else

@@ -30,7 +30,10 @@ Given(/^I am on the place ships page$/) do
   register("Andrew")
   register("Michael")
   visit '/deploy/Michael'
-  
+end
+
+Given(/^I am waiting on the place ships page$/) do
+  visit '/deploy/Michael'
 end
 
 Given(/^I place all of my ships$/) do

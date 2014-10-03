@@ -11,7 +11,7 @@ Feature: Placing Ships
     Then I should see "battleship"
 
   Scenario: Placing all ships
-    Given I am on the place ships page
+    Given I am waiting on the place ships page
     And I place all of my ships
     Then I should see "Waiting for other weirdo to place ships"
 

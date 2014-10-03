@@ -18,6 +18,10 @@ class BattleShips < Sinatra::Base
   end
 
   get '/begin' do
+    if game_ready?
+      flash[:error]= "Game already full"
+      redirect '/'
+    end
     erb :begin
   end
 
@@ -86,8 +90,8 @@ class BattleShips < Sinatra::Base
   end
 
   post '/start_shooting/:player' do |player|
-    if params[:coordinate] == ""
-      flash[:error] = "You need to enter a coordinate"
+    if params[:coordinate] == "" || !valid_coord(receive_coord(params[:coordinate]))
+      flash[:error] = "You need to enter a valid coordinate"
       redirect "/start_shooting/#{player}"
     end
     player = player_select(player)
@@ -110,15 +114,15 @@ class BattleShips < Sinatra::Base
   end
 
   get '/loser/:player' do |player|
-    @opponent = get_name(find_opponent(player))
     player = player_select(player)
+    @opponent = get_name(find_opponent(player))
     @player = get_name(player)
     erb :loser
   end
 
   get '/winner/:player' do |player|
-    @opponent = get_name(find_opponent(player))
     player = player_select(player)
+    @opponent = get_name(find_opponent(player))
     @player = get_name(player)
     erb :winner
   end
@@ -173,6 +177,11 @@ class BattleShips < Sinatra::Base
   def name_converter(player)
     player = player.gsub(/[^A-Za-z\s]/, "").strip
     player = player.gsub(/\s/, "_")
+  end
+
+  def valid_coord(coordinate)
+    y, x = coordinate
+    GAME.in_grid(y, x)
   end
 
   def get_name(player)
