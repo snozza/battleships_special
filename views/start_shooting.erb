@@ -1,7 +1,7 @@
 <h2>Let's Shoot!</h2>
 
-<h3>Place your shot <%= @attacker %></h3>
-<h4>Your nemesis <%= @opponent.name %> is waiting!</h4>
+<h3>Place your shot <%= @display_name %></h3>
+<h4>Your nemesis <%= @opponent %> is waiting!</h4>
 
 <% if flash[:error] %>
     <%= flash[:error] %>
