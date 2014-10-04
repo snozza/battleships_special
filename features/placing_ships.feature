@@ -8,7 +8,7 @@ Feature: Placing Ships
     When I fill in "coordinate" with "C1"
     And I fill in "direction" with "R"
     And I click "Submit!"
-    Then I should see "battleship"
+    Then I should see "Battleship"
 
   Scenario: Placing all ships
     Given I am waiting on the place ships page

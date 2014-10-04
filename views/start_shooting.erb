@@ -1,7 +1,6 @@
 <h2>Let's Shoot!</h2>
 
-<h3>Place your shot <%= @display_name %></h3>
-<h4>Your nemesis <%= @opponent %> is waiting!</h4>
+<h3>Try and hit one of <%= @opponent %>'s ships!</h3>
 
 <% if flash[:error] %>
     <%= flash[:error] %>
@@ -15,7 +14,7 @@
 
 <section>
     <table>
-    <caption>Shooting Board</caption>
+    <caption class="bold">Shooting Board</caption>
     <tr>
       <th></td>
       <th>A</td>
@@ -45,7 +44,7 @@
 
 <section>
     <table>
-    <caption>Your Board</caption>
+    <caption class="bold">Your Board</caption>
     <tr>
       <th></td>
       <th>A</td>

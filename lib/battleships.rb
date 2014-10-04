@@ -13,7 +13,6 @@ class BattleShips < Sinatra::Base
   set :public_dir, Proc.new {File.join(root, '..', "public")}
   
   get '/' do
-    session[:player] = ''
     erb :index
   end
 
@@ -31,6 +30,10 @@ class BattleShips < Sinatra::Base
       redirect '/begin'
     end
     player = name_converter(params[:player])
+    if name_used?(player)
+      flash[:error] = "Name already in use"
+      redirect '/begin'
+    end 
     add_player(player)
     session[:player] = player
     redirect "/deploy/#{session[:player]}" if game_ready?
@@ -60,7 +63,9 @@ class BattleShips < Sinatra::Base
     direction = direction_check(params[:direction])
     player = player_select(player)
     ship = player.ships.first
-    redirect "/deploy/#{player.name}" if !placement_check(ship, coordinate, direction, player)
+    if !placement_check(ship, coordinate, direction, player)
+      flash[:error] = "Invalid placement!"; redirect "/deploy/#{player.name}"
+    end
     
     place_ship(player, ship, coordinate, direction)
     player.ships.delete(ship)
@@ -98,8 +103,11 @@ class BattleShips < Sinatra::Base
     coordinate = receive_coord(params[:coordinate])
     opponent = find_opponent(player)
     shot_status = fire!(coordinate, opponent, player)
+    if !shot_status
+      flash[:error] = "Already targeted that coordinate!" 
+      redirect "/start_shooting/#{player.name}"
+    end
     ship = shot_status == :Sunk! ? find_ship(coordinate, opponent).name : "none" 
-    redirect "/start_shooting/#{player.name}" if !shot_status
     redirect "/winner/#{player.name}" if opponent.ships_left == 0
     GAME.turns
     redirect "/shoot_wait/#{player.name}/#{shot_status}/#{ship}"
@@ -190,6 +198,10 @@ class BattleShips < Sinatra::Base
 
   def get_name(player)
     player = player.name.gsub(/_/, " ")
+  end
+
+  def name_used?(name)
+    !GAME.players.select {|player| player.name == name}.empty?
   end
 
   # start the server if ruby file executed directly
