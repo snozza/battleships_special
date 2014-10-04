@@ -25,17 +25,11 @@ module CoordChecker
 
   def placement_check(ship, coordinate, direction, player) 
     return false if !coordinate
-    return false if !direction
     y, x = coordinate
     return false if !in_grid(x, y)
     return false if !board_fit?(ship, coordinate, direction)
     return false if ship_clash?(ship, coordinate, direction, player)
     true
-  end
-
-  def verify_direction(direction)
-    return direction.upcase if direction.upcase == "D" || direction.upcase == "R"
-    false
   end
 
   def in_grid(x, y)

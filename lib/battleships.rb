@@ -60,7 +60,7 @@ class BattleShips < Sinatra::Base
       redirect "/deploy/#{player}"
     end
     coordinate = receive_coord(params[:coordinate])
-    direction = direction_check(params[:direction])
+    direction = params[:direction]
     player = player_select(player)
     ship = player.ships.first
     if !placement_check(ship, coordinate, direction, player)
@@ -190,10 +190,6 @@ class BattleShips < Sinatra::Base
   def valid_coord(coordinate)
     y, x = coordinate
     GAME.in_grid(y, x)
-  end
-
-  def direction_check(direction)
-    GAME.verify_direction(direction)
   end
 
   def get_name(player)

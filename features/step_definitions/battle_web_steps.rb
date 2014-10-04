@@ -18,6 +18,10 @@ When(/^I click "(.*?)"$/) do |button|
   click_on(button)
 end
 
+When(/^I choose "(.*?)"$/) do |direction|
+  ("choose radio_direction")
+end
+
 Given(/^"(.*?)" has registered$/) do |player|
   visit '/' 
 end
@@ -80,7 +84,7 @@ end
 
 def place_a_ship(coord, direct)
   fill_in("coordinate", :with => coord)
-  fill_in("direction", :with => direct)
+  choose(direct)
   click_on "Submit!"
 end
 

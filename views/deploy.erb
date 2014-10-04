@@ -8,8 +8,9 @@
 <form name="deployment" action=<%= "/deploy/#{@current_player}"%> method="post">
     <label for="coordinate">Coordinate</label>
     <input type="text" name="coordinate" placeholder="e.g. C1">
-    <label for="direction">Direction</label>
-    <input type="text" name="direction">
+    <input type="hidden" name="direction" value="">
+    <input type="radio" name="direction", id="R" value="R">Right
+    <input type="radio" name="direction", id="D" value="D">Down
     <input type="submit" value="Submit!">
 </form>
 
