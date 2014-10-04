@@ -25,7 +25,7 @@ module CoordChecker
 
   def placement_check(ship, coordinate, direction, player) 
     return false if !coordinate
-    return false if !direction || !verify_direction(direction)
+    return false if !direction
     y, x = coordinate
     return false if !in_grid(x, y)
     return false if !board_fit?(ship, coordinate, direction)

@@ -10,12 +10,12 @@
 <form name="shoot" action=<%="/start_shooting/#{@attacker}"%> method="post">
     <label for="coordinate">Coordinate</label>
     <input type="text" name="coordinate" placeholder="e.g. C4" autofocus>
-    <button>Fire Away!</button>
+    <input type="submit" value="Fire Away!">
 </form>
 
-<h4>Shooting Board</h4>
 <section>
     <table>
+    <caption>Shooting Board</caption>
     <tr>
       <th></td>
       <th>A</td>
@@ -43,9 +43,9 @@
     </table>
 </section>
 
-<h5>Your Board</h5>
 <section>
     <table>
+    <caption>Your Board</caption>
     <tr>
       <th></td>
       <th>A</td>

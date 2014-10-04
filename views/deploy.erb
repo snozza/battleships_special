@@ -1,6 +1,6 @@
-<h2>Let's place your ships!!</h2>
-<h3>Hi <%= @display_name %></h3>
-<h4>Ship to place: <%= @next_ship.name %> </h4>
+<h2>Hey there, <%= @display_name %></h2>
+<p> Let's place your ships!! </p>
+<p> Ship to place: <%= @next_ship.name %> </p>
 <% if flash[:error] %>
     <%= flash[:error] %>
 <% end %>
@@ -10,12 +10,12 @@
     <input type="text" name="coordinate">
     <label for="direction">Direction</label>
     <input type="text" name="direction">
-    <button>Submit!</button>
+    <input type="submit" value="Submit!">
 </form>
 
 
 <section>
-    <table>
+    <table class="left">
     <tr>
       <th></td>
       <th>A</td>
