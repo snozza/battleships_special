@@ -57,6 +57,7 @@ class BattleShips < Sinatra::Base
     player = player_select(player)
     @current_player = player.name
     @display_name = get_name(player)
+    @opponent = get_name(find_opponent(player))
     @board = player.board
     @next_ship = player.ships.first
     erb :deploy
