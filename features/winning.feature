@@ -11,3 +11,5 @@ Feature: Winning a Game
   Scenario: Winning
     When I sink all of my opponent's ships
     Then I should see "Won"
+    When I click on "reset"
+    Then I should see "What's your name?"

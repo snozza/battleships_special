@@ -4,13 +4,14 @@ require_relative 'ship'
 
 class Cell
 
-  attr_accessor :ship, :status
+  attr_accessor :ship, :status, :orientation
 
   MARKER = {:hit => 'X', :miss => 'O', :empty => '-'}
 
   def initialize(ship=nil, status=:empty)
     @ship = ship
     @status = status
+    @orientation = nil
   end
 
   def hit

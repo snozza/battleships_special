@@ -34,8 +34,22 @@
           @shooting_board.grid.each do |row|
             index += 1%>
             <td><%= index %></td>
-        <% row.each do |column| %></td>
-            <td><%= column %></td>
+        <% row.each do |column| %>
+            <% if column.to_s == '-' %>
+              <td>-</td>
+            <% elsif column.to_s == '#' %>
+              <td>-</td>
+            <% elsif column.ship && column.ship.sunk? && column.to_s == 'X' %>
+              <% if column.orientation == "R" %>
+                <td><img class="stretch" src="/images/ships/batt202.gif"></td>
+              <% else %>
+                <td><img class="tall" src="/images/ships/batt205.gif"></td>
+              <% end %>  
+            <% elsif column.to_s == 'X' %>
+              <td><img src="/images/ships/batt103.gif"></td>
+            <% elsif column.to_s == 'O' %>
+              <td>O</td>    
+            <% end %>
         <% end %>
     </tr>
     <% end %>
@@ -64,8 +78,24 @@
           @player_board.grid.each do |row|
             index += 1%>
             <td><%= index %></td>
-        <% row.each do |column| %></td>
-            <td><%= column %></td>
+        <% row.each do |column| %>
+            <% if column.to_s == '-' %>
+              <td>-</td>
+            <% elsif column.to_s == '#' %>
+                <% if column.orientation == "R" %>
+                  <td><img class="stretch" src="/images/ships/batt2.gif"></td>
+                <% else %>
+                  <td><img class="tall" src="/images/ships/batt7.gif"></td>
+                <% end %>
+            <% elsif column.to_s == 'X' %>
+                <% if column.orientation == "R" %>
+                  <td><img class="stretch" src="/images/ships/batt202.gif"></td>
+                <% else %>
+                  <td><img class="tall" src="/images/ships/batt205.gif"></td>
+                  <% end %>  
+            <% elsif column.to_s == 'O' %>
+              <td>O</td>    
+            <% end %>
         <% end %>
     </tr>
     <% end %>

@@ -14,11 +14,16 @@ class Board
   end 
 
   def place_ship(ship, coordinate, direction)
-      y, x = coordinate
-      ship.size.times do 
-        grid[y][x].ship = ship
-        direction == "D" ? y += 1 : x += 1
-      end
+    y, x = coordinate
+    ship.size.times do 
+      add_part(y, x, ship, direction)
+      direction == "D" ? y += 1 : x += 1
+    end
+  end
+
+  def add_part(y, x, ship, direction)
+    grid[y][x].ship = ship
+    grid[y][x].orientation = direction
   end
 
   def shoot_at(y, x)

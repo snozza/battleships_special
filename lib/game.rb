@@ -46,9 +46,10 @@ class Game
 	end
 
 	def ship_hit(player, opponent, y, x)
-		player.tracking_board.update_tracking_board(y, x, :hit)
 		opponent.board.shoot_at(y, x)
 		opponent.ships_left -= 1 if ship_status(opponent.board.grid[y][x].ship)
+		update_boards(player, opponent, y, x)
+		player.tracking_board.update_tracking_board(y, x, :hit)
 	end
 
 	def ship_miss(player, opponent, y, x)
@@ -56,9 +57,14 @@ class Game
 		opponent.board.shoot_at(y, x)
 	end
 
+	def update_boards(player, opponent, y, x)
+		player.tracking_board.grid[y][x].ship = opponent.board.grid[y][x].ship
+		player.tracking_board.grid[y][x].orientation = opponent.board.grid[y][x].orientation
+		end
+
 	def sink_check(y, x, opponent, player)
 		ship_hit(player, opponent, y, x)
-		opponent.board.grid[y][x].ship.sunk? ? :Sunk! : :Hit!
+		ship_status(opponent.board.grid[y][x].ship) ? :Sunk! : :Hit!
 	end
 
 	def ship_finder(coordinate, player)

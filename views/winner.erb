@@ -1,3 +1,9 @@
 <h2> You Won!!!!!!!!!! Congratulations!!! </h2>
 <h2> <%= @player %> is the WINNNERRRR !!!! </h2>
-<h3> <%= @opponent %> is the loser.... </h3> 
+<h3> <%= @opponent %> is the loser.... </h3>
+
+<% if flash[:error] %>
+    <%= flash[:error] %>
+<% end %>
+<a class="links" id="reset" href="/reset">Reset</a>
+

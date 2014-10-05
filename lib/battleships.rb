@@ -7,7 +7,7 @@ class BattleShips < Sinatra::Base
 
   enable :sessions
   use Rack::Flash, :sweep => true
-  set :session_secret, "I'm starting with the man in the mirror"
+  set :session_secret, "super secret"
   set :views, Proc.new {File.join(root, '..', "views")}
   set :public_dir, Proc.new {File.join(root, '..', "public")}
 
@@ -143,6 +143,11 @@ class BattleShips < Sinatra::Base
     erb :winner
   end
 
+  get '/reset' do
+    reset_game
+    erb :index
+  end
+
   def game
     @@games[session[:id]]
   end
@@ -210,6 +215,12 @@ class BattleShips < Sinatra::Base
 
   def name_used?(name)
     !game.players.select {|player| player.name == name}.empty?
+  end
+
+  def reset_game
+    @@games[session[:id]].players = []
+    session.clear
+    redirect '/begin'
   end
 
   # start the server if ruby file executed directly
