@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 ruby "2.0.0"
 
 gem 'sinatra'
+gem 'rack-flash3'
 
 group :development, :test do
   gem 'capybara'
@@ -10,7 +11,6 @@ group :development, :test do
   gem 'launchy'
   gem 'rspec'
   gem 'shotgun'
-  gem 'rack-flash3'
   gem 'terminal-table'
 
 end
