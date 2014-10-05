@@ -2,6 +2,10 @@ Given(/^I am on the homepage$/) do
   visit '/'
 end
 
+Given(/^"(.*?)" is waiting$/) do |name|
+  visit '/begin'
+end
+
 When(/^I click on "(.*?)"$/) do |button|
   click_on(button)
 end
@@ -23,7 +27,7 @@ When(/^I choose "(.*?)"$/) do |direction|
 end
 
 Given(/^"(.*?)" has registered$/) do |player|
-  visit '/' 
+  register("player")
 end
 
 When(/^I register with name "(.*?)"$/) do |name|
@@ -37,11 +41,11 @@ Given(/^I am on the place ships page$/) do
 end
 
 Given(/^I am waiting on the place ships page$/) do
-  visit '/deploy/Michael'
+  register("Andrew")
+  register("Michael")
 end
 
 Given(/^I place all of my ships$/) do
-  visit '/deploy/Andrew'
   place_a_ship("H1", "D")
   place_all_ships
 end
@@ -49,15 +53,6 @@ end
 Given(/^"(.*?)" is on the deploy wait page$/) do |name|
   visit '/deploy_wait'
 end
-
-Given(/^I am on the waiting to shoot page$/) do
-  visit '/shoot_wait/Andrew/start'
-end
-
-When(/^it is my turn$/) do
-  visit '/start_shooting/Andrew'
-end
-
 
 When(/^I place my ships$/) do
   visit '/deploy/Michael'
@@ -82,6 +77,15 @@ Given(/^I am on the shoot page$/) do
   visit '/start_shooting/Andrew'
 end
 
+When(/^I sink all of my opponent's ships$/) do
+  sink_all
+end
+
+def shoot(coord)
+  fill_in("coordinate", :with => coord)
+  click_on("Fire Away!")
+end
+
 def place_a_ship(coord, direct)
   fill_in("coordinate", :with => coord)
   choose(direct)
@@ -90,7 +94,7 @@ end
 
 def register(player)
   visit '/'
-  click_link "game-start"
+  click_on("Begin")
   fill_in("player", :with => player)
   click_on("Submit")
 end
@@ -101,5 +105,13 @@ def place_all_ships
   place_a_ship("E1", "D")
   place_a_ship("F1", "D")
   place_a_ship("G1", "D")
+end
+
+def sink_all
+  coords = %w(h1, h2, a1, a2, a3, a4, e1, e2, e3, f1, f2, f3, f4, f5, g1, g2, g3)
+  coords.each do |coord|
+    visit '/start_shooting/Michael'
+    shoot(coord)
+  end
 end
 

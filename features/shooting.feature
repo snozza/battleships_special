@@ -3,18 +3,24 @@ Feature: Shooting at each other
   As a sniper
   I want to target the opponent's grid
 
-  Scenario: All ships placed
+  Background: Setup of Ships
     Given both players are registered
-    When "Andrew" places all of his ships
-    And I place my ships
-    Then I should see "Waiting to shoot!"
+    When I place my ships
+    And "Andrew" places all of his ships
+    Then I should see "Let's Shoot!" 
 
-  Scenario: Shooting
-    Given I am on the waiting to shoot page
-    When it is my turn
-    And I fill in "coordinate" with "A1"
+  Scenario: Shooting and Hitting
+    When I fill in "coordinate" with "A1"
     And I click on "Fire Away!"
     Then I should see "You HIT your opponent's ship!!!"
+
+  Scenario: Shooting and Missing
+    When I fill in "coordinate" with "J9"
+    And I click on "Fire Away!"
+    Then I should see "You Suck"
+
+
+  
 
 
 

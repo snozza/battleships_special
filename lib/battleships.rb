@@ -1,26 +1,34 @@
 require 'sinatra/base'
 require 'rack-flash'
+require 'securerandom'
 require_relative 'game'
 
 class BattleShips < Sinatra::Base
-
-  GAME = Game.new
 
   enable :sessions
   use Rack::Flash, :sweep => true
   set :session_secret, "I'm starting with the man in the mirror"
   set :views, Proc.new {File.join(root, '..', "views")}
   set :public_dir, Proc.new {File.join(root, '..', "public")}
+
+  @@games = Hash.new
+  @@waiting_player = []
+
   
   get '/' do
+    if @@waiting_player.empty?
+      session[:id] = SecureRandom.uuid
+      @@waiting_player << session[:id]
+      @@games[session[:id]] = Game.new
+    else
+      session[:id] = SecureRandom.uuid
+      @@games[session[:id]] = @@games[@@waiting_player.pop]
+    end
     erb :index
+
   end
 
   get '/begin' do
-    if game_ready?
-      flash[:error]= "Game already full"
-      redirect '/'
-    end
     erb :begin
   end
 
@@ -109,7 +117,7 @@ class BattleShips < Sinatra::Base
     end
     ship = shot_status == :Sunk! ? find_ship(coordinate, opponent).name : "none" 
     redirect "/winner/#{player.name}" if opponent.ships_left == 0
-    GAME.turns
+    game.turns
     redirect "/shoot_wait/#{player.name}/#{shot_status}/#{ship}"
   end
 
@@ -135,51 +143,55 @@ class BattleShips < Sinatra::Base
     erb :winner
   end
 
+  def game
+    @@games[session[:id]]
+  end
+
   def all_ships_deployed?
-    GAME.players.each do |player|
+    game.players.each do |player|
       return false if !player.ships.empty?
     end
     true
   end
 
   def my_turn?(player)
-    GAME.players[0].name == player
+    game.players[0].name == player
   end
 
   def player_select(player)
-    (GAME.players.select {|person| person.name == player})[0]
+    (game.players.select {|person| person.name == player})[0]
   end
 
   def find_opponent(player)
-    GAME.my_opponent(player)
+    game.my_opponent(player)
   end
 
   def fire!(coordinate, opponent, player)
-    GAME.shoot(coordinate, opponent, player)
+    game.shoot(coordinate, opponent, player)
   end
 
   def receive_coord(coordinate)
-    GAME.coord_converter(params[:coordinate])
+    game.coord_converter(params[:coordinate])
   end
 
   def game_ready?
-    GAME.players.count == 2
+    game.players.count == 2
   end
 
   def placement_check(ship, coordinate, direction, player)
-    GAME.placement_check(ship, coordinate, direction, player)
+    game.placement_check(ship, coordinate, direction, player)
   end
 
   def add_player(player)
-    GAME.add_player(Player.new(player))
+    game.add_player(Player.new(player))
   end
 
   def find_ship(coordinate, opponent)
-    GAME.ship_finder(coordinate, opponent)
+    game.ship_finder(coordinate, opponent)
   end
 
   def place_ship(player, ship, coordinate, direction)
-    GAME.ask_player_place_ship(player, ship, coordinate, direction)
+    game.ask_player_place_ship(player, ship, coordinate, direction)
   end
 
   def name_converter(player)
@@ -189,7 +201,7 @@ class BattleShips < Sinatra::Base
 
   def valid_coord(coordinate)
     y, x = coordinate
-    GAME.in_grid(y, x)
+    game.in_grid(y, x)
   end
 
   def get_name(player)
@@ -197,7 +209,7 @@ class BattleShips < Sinatra::Base
   end
 
   def name_used?(name)
-    !GAME.players.select {|player| player.name == name}.empty?
+    !game.players.select {|player| player.name == name}.empty?
   end
 
   # start the server if ruby file executed directly

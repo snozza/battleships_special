@@ -19,7 +19,7 @@ class Ship
 	end
 
 	def self.aircraftcarrier
-		new(5, "Aircraft carrier", 0)
+		new(5, "AircraftCarrier", 0)
 	end
 
 	def self.battleship
