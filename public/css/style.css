@@ -91,15 +91,10 @@ table {
 }
 
 table td:first-child{
-          font-family:Arial, sans-serif;
-          font-size:12px;
-          font-weight:normal;
-          border-style:solid;
-          overflow:hidden;
-          background-color: none;
+          font-weight:bold
 }
 
-table td{
+table td:not(:first-child){
           font-family:Arial, sans-serif;
           font-size:12px;
           font-weight:normal;
@@ -112,7 +107,7 @@ table td{
 td, tr{  
          width: 2em; height: 2em;
          padding: 0px;
-         
+
 
 }
 

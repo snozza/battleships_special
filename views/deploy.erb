@@ -38,7 +38,7 @@
             <td><%= index %></td>
         <% row.each do |column| %>
             <% if column.to_s == '-' %>
-              <td>-</td>
+              <td></td>
             <% elsif column.to_s == '#' %>
                 <% if column.orientation == "R" %>
                   <td><img class="stretch" src="/images/ships/batt2.gif"></td>

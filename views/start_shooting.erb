@@ -41,10 +41,10 @@
         <% index = 0
           @shooting_board.grid.each do |row|
             index += 1%>
-            <td><%= index %></td>
+            <td class="first-child"><%= index %></td>
         <% row.each do |column| %>
             <% if column.to_s == '-' %>
-              <td>-</td>
+              <td></td>
             <% elsif column.to_s == '#' %>
               <td>-</td>
             <% elsif column.ship && column.ship.sunk? && column.to_s == 'X' %>
@@ -56,7 +56,7 @@
             <% elsif column.to_s == 'X' %>
               <td><img src="/images/ships/batt103.gif"></td>
             <% elsif column.to_s == 'O' %>
-              <td>O</td>    
+              <td><img src="/images/ships/batt102.gif"></td>    
             <% end %>
         <% end %>
     </tr>
@@ -102,7 +102,7 @@
                   <td><img class="tall" src="/images/ships/batt205.gif"></td>
                   <% end %>  
             <% elsif column.to_s == 'O' %>
-              <td>O</td>    
+              <td><img src="/images/ships/batt102.gif"></td>    
             <% end %>
         <% end %>
     </tr>
