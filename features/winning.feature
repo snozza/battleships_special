@@ -6,7 +6,8 @@ Feature: Winning a Game
   Background: Setup of Ships
     Given both players are registered
     When I place my ships
-    And "Andrew" places all of his ships
+    When I am in "Andrew"'s browser
+    And I place my ships
 
   Scenario: Winning
     When I sink all of my opponent's ships

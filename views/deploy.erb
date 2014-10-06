@@ -5,7 +5,7 @@
     <%= flash[:error] %>
 <% end %>
 
-<form name="deployment" action=<%= "/deploy/#{@current_player}"%> method="post">
+<form name="deployment" action=<%= "/deploy"%> method="post">
     <label for="coordinate">Coordinate</label>
     <input type="text" name="coordinate" placeholder="e.g. C1">
     <input type="hidden" name="direction" value="">

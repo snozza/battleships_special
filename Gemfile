@@ -12,5 +12,6 @@ group :development, :test do
   gem 'rspec'
   gem 'shotgun'
   gem 'terminal-table'
+  gem 'rack_session_access'
 
 end

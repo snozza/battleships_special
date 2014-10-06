@@ -1,12 +1,20 @@
-<h2>Let's Shoot!</h2>
+<% if @opponent.last_shot.status == :miss %>
+        <h3><%= @opponent_name%> Sucked!! That was a miss.</h3>
+<% elsif @opponent.last_shot.ship && @opponent.last_shot.ship.sunk?%>
+        <h3><%= @opponent_name%> is on Fire!! Your <%=@opponent.last_shot.ship.name%> was sunk!!</h3>
+<% elsif @opponent.last_shot.status == :hit %>
+        <h3><%= @opponent_name%> Rocked!! Your ship was hit.</h3>
+<% else %>
+        <h2>Let's Shoot!</h2>
+<% end %>
 
-<h3>Try and hit one of <%= @opponent %>'s ships!</h3>
+<h3>Try and hit one of <%= @opponent_name %>'s ships!</h3>
 
 <% if flash[:error] %>
     <%= flash[:error] %>
 <% end %>
 
-<form name="shoot" action=<%="/start_shooting/#{@attacker}"%> method="post">
+<form name="shoot" action=<%="/start_shooting"%> method="post">
     <label for="coordinate">Coordinate</label>
     <input type="text" name="coordinate" placeholder="e.g. C4" autofocus>
     <input type="submit" value="Fire Away!">

@@ -44,17 +44,17 @@ class BattleShips < Sinatra::Base
     end 
     add_player(player)
     session[:player] = player
-    redirect "/deploy/#{session[:player]}" if game_ready?
+    redirect "/deploy" if game_ready?
     redirect '/wait'
   end
 
   get '/wait' do
-    redirect "/deploy/#{session[:player]}" if game_ready?
+    redirect "/deploy" if game_ready?
     erb :wait
   end
 
-  get '/deploy/:player' do |player|
-    player = player_select(player)
+  get '/deploy' do 
+    player = player_select(session[:player])
     @current_player = player.name
     @display_name = get_name(player)
     @opponent = get_name(find_opponent(player))
@@ -63,82 +63,88 @@ class BattleShips < Sinatra::Base
     erb :deploy
   end
 
-  post '/deploy/:player' do |player|
+  post '/deploy' do 
     if params[:coordinate] == "" || params[:direction] == ""
       flash[:error] = "You need to enter a coordinate and a direction"
-      redirect "/deploy/#{player}"
+      redirect "/deploy"
     end
     coordinate = receive_coord(params[:coordinate])
     direction = params[:direction]
-    player = player_select(player)
+    player = player_select(session[:player])
     ship = player.ships.first
     if !placement_check(ship, coordinate, direction, player)
-      flash[:error] = "Invalid placement!"; redirect "/deploy/#{player.name}"
+      flash[:error] = "Invalid placement!"; redirect "/deploy"
     end
     
     place_ship(player, ship, coordinate, direction)
     player.ships.delete(ship)
-    redirect "/deploy_wait/#{player.name}" if player.ships.empty?
+    redirect "/deploy_wait" if player.ships.empty?
     @current_player = player.name
     @display_name = get_name(player)
+    @opponent = get_name(find_opponent(player))
     @board = player.board
     @ships = player.ships
     @next_ship = player.ships.first
     erb :deploy
   end
 
-  get '/deploy_wait/:player' do |player|
-    redirect "/start_shooting/#{player}" if all_ships_deployed? && my_turn?(player)
-    redirect "/shoot_wait/#{player}/start/none" if all_ships_deployed? && !my_turn?(player)
+  get '/deploy_wait' do
+    player = session[:player]
+    session[:result] = "start"; session[:ship] = "none"
+    redirect "/start_shooting" if all_ships_deployed? && my_turn?(player)
+    redirect "/shoot_wait" if all_ships_deployed? && !my_turn?(player)
     erb :deploy_wait
   end
 
-  get '/start_shooting/:player' do |player|
-    player = player_select(player)
+  get '/start_shooting' do
+    player = player_select(session[:player])
     @attacker = player.name
     @display_name = get_name(player)
-    @opponent = get_name(find_opponent(player))
+    @opponent = find_opponent(player)
+    @opponent_name = get_name(@opponent)
     @player_board = player.board
     @shooting_board = player.tracking_board
     erb :start_shooting
   end
 
-  post '/start_shooting/:player' do |player|
+  post '/start_shooting' do
     if params[:coordinate] == "" || !valid_coord(receive_coord(params[:coordinate]))
       flash[:error] = "You need to enter a valid coordinate"
-      redirect "/start_shooting/#{player}"
+      redirect "/start_shooting"
     end
-    player = player_select(player)
+    player = player_select(session[:player])
     coordinate = receive_coord(params[:coordinate])
     opponent = find_opponent(player)
     shot_status = fire!(coordinate, opponent, player)
     if !shot_status
       flash[:error] = "Already targeted that coordinate!" 
-      redirect "/start_shooting/#{player.name}"
+      redirect "/start_shooting"
     end
-    ship = shot_status == :Sunk! ? find_ship(coordinate, opponent).name : "none" 
-    redirect "/winner/#{player.name}" if opponent.ships_left == 0
+    session[:result] = shot_status
+    session[:ship] = shot_status == :Sunk! ? find_ship(coordinate, opponent).name : "none" 
+    redirect "/winner" if opponent.ships_left == 0
     game.turns
-    redirect "/shoot_wait/#{player.name}/#{shot_status}/#{ship}"
+    redirect "/shoot_wait"
   end
 
-  get '/shoot_wait/:player/:result/:ship' do |player, result, ship|
-    @ship = ship
-    @result = result
-    redirect "/start_shooting/#{player}" if my_turn?(player)
-    redirect "/loser/#{player}" if player_select(player).ships_left == 0
+  get '/shoot_wait' do
+    player = session[:player]
+    @ship = session[:ship]
+    @result = session[:result]
+    redirect "/start_shooting" if my_turn?(player)
+    redirect "/loser" if player_select(player).ships_left == 0
     erb :shoot_wait
   end
 
-  get '/loser/:player' do |player|
-    player = player_select(player)
+  get '/loser' do 
+    player = player_select(session[:player])
     @opponent = get_name(find_opponent(player))
     @player = get_name(player)
     erb :loser
   end
 
-  get '/winner/:player' do |player|
-    player = player_select(player)
+  get '/winner' do 
+    player = player_select(session[:player])
     @opponent = get_name(find_opponent(player))
     @player = get_name(player)
     erb :winner
@@ -221,7 +227,6 @@ class BattleShips < Sinatra::Base
   def reset_game
     @@games[session[:id]].players = []
     session.clear
-    redirect '/begin'
   end
 
   # start the server if ruby file executed directly

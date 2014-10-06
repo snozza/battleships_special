@@ -78,8 +78,6 @@ section {
           border-spacing:0;
 }
 
-
-
 table {   
           table-layout: fixed;
           margin-left: 2em;
@@ -88,15 +86,6 @@ table {
           border-width:1px;
           border-collapse:collapse;
 
-}
-
-table td:first-child{
-          font-family:Arial, sans-serif;
-          font-size:12px;
-          font-weight:normal;
-          border-style:solid;
-          overflow:hidden;
-          background-color: none;
 }
 
 table td{
@@ -108,11 +97,9 @@ table td{
           background-color: #7BCCCC;
 }
 
-
 td, tr{  
          width: 2em; height: 2em;
          padding: 0px;
-         
 
 }
 

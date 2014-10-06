@@ -37,6 +37,9 @@ GEM
       rack
     rack-test (0.6.2)
       rack (>= 1.0)
+    rack_session_access (0.1.1)
+      builder (>= 2.0.0)
+      rack (>= 1.0.0)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
@@ -73,6 +76,7 @@ DEPENDENCIES
   cucumber-sinatra
   launchy
   rack-flash3
+  rack_session_access
   rspec
   shotgun
   sinatra

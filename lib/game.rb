@@ -54,6 +54,7 @@ class Game
 
 	def ship_miss(player, opponent, y, x)
 		player.tracking_board.update_tracking_board(y, x, :miss)
+		update_last_shot(player, y, x)
 		opponent.board.shoot_at(y, x)
 	end
 
@@ -64,12 +65,17 @@ class Game
 
 	def sink_check(y, x, opponent, player)
 		ship_hit(player, opponent, y, x)
+		update_last_shot(player, y, x)
 		ship_status(opponent.board.grid[y][x].ship) ? :Sunk! : :Hit!
 	end
 
 	def ship_finder(coordinate, player)
 		y, x = coordinate
 		player.board.grid[y][x].ship
+	end
+
+	def update_last_shot(player, y, x)
+		player.last_shot = player.tracking_board.grid[y][x]
 	end
 
 end

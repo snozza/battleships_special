@@ -37,7 +37,7 @@ end
 Given(/^I am on the place ships page$/) do
   register("Andrew")
   register("Michael")
-  visit '/deploy/Michael'
+  visit '/deploy'
 end
 
 Given(/^I am waiting on the place ships page$/) do
@@ -55,7 +55,7 @@ Given(/^"(.*?)" is on the deploy wait page$/) do |name|
 end
 
 When(/^I place my ships$/) do
-  visit '/deploy/Michael'
+  visit '/deploy'
   place_a_ship("H1", "D")
   place_a_ship("A1", "D")
   place_a_ship("E1", "D")
@@ -64,12 +64,13 @@ When(/^I place my ships$/) do
 end
 
 Given(/^both players are registered$/) do
+  Capybara.session_name = "Andrew"
   register("Andrew")
+  Capybara.session_name = "Michael"
   register("Michael")
 end
 
 When(/^"(.*?)" places all of his ships$/) do |name|
-  visit "/deploy/#{name}"
   place_all_ships
 end
 
@@ -79,6 +80,10 @@ end
 
 When(/^I sink all of my opponent's ships$/) do
   sink_all
+end
+
+When(/^I am in "(.*?)"'s browser$/) do |name|
+  Capybara.session_name = name
 end
 
 def shoot(coord)
@@ -110,8 +115,11 @@ end
 def sink_all
   coords = %w(h1, h2, a1, a2, a3, a4, e1, e2, e3, f1, f2, f3, f4, f5, g1, g2, g3)
   coords.each do |coord|
-    visit '/start_shooting/Michael'
+    visit '/start_shooting'
     shoot(coord)
   end
 end
+
+
+
 

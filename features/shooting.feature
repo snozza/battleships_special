@@ -6,8 +6,9 @@ Feature: Shooting at each other
   Background: Setup of Ships
     Given both players are registered
     When I place my ships
-    And "Andrew" places all of his ships
-    Then I should see "Let's Shoot!" 
+    When I am in "Andrew"'s browser
+    And I place my ships
+    Then I should see "Let's Shoot"   
 
   Scenario: Shooting and Hitting
     When I fill in "coordinate" with "A1"
