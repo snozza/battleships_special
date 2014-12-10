@@ -50,7 +50,7 @@ Run the tests:
 $ rspec
 ```
 
-Start the rack server and visit http://localhost:3000/: 
+Start the rack server and visit http://localhost/ on your local port 
 
 ```
 $ ruby lib/battleships.rb (or use rackup)
