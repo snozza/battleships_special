@@ -5,7 +5,7 @@ Battleship Special - Web Version
 
 ### Introduction
 
-Battleship was a group project in weeks 2 and 3 of Makers Academy. After this period, I decided to continue the project, using a large amount of the code from the group project, and adding to it in order to make an online multiplayer version. It is a very simple ruby/sinatra app that involves multiple routes which control the status of the game. While the game works, and can support multiple two player games at the same time, it lacks features such as dynamic updating (should essentially be a single page app).
+Very simple ruby/sinatra app sans any JS. While the game works, and can support multiple two player games at the same time, it is lackluster and does not have any JavaScript etc....nothing is dynamic.
 
 
 ### Languages/Platforms/Tools
@@ -18,8 +18,7 @@ Battleship was a group project in weeks 2 and 3 of Makers Academy. After this pe
 
 ### Learning Outcomes
 
-The aim was to make a mutiplayer Battleship game which would add in the learning or route handling and becoming familiar with Sinatra, a lightweight ruby framework. Without using JavaScript, JQuery, and related tools, it was difficult to make a seamless game experience (the pages are static and rely on refresh to serve updated content). I am however quite please with the end result, and I was able to learn the ins-and-outs of sinatra, while making a fully functionaly and largely bug-free session based online game.
-
+Don't make games on a static website...and clean up your damn code!
 
 ### To-do List
 - [ ] Fix bug that causes game to crash if person is playing in the one browser (session bug).
